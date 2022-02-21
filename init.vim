@@ -40,7 +40,7 @@ set listchars=eol:↴,lead:⋅,tab:<->
 " Make every .tex file become filetype latex
 let g:tex_flavor="latex"
 " enable python for virtualenvs
-"let g:python3_host_prog = '~/.venv/neovim/bin/python'
+let g:python3_host_prog = '~\.venv\neovim\Scripts\python.exe'
 " }}}
 
 " Put all the plugins here
@@ -63,6 +63,21 @@ let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 4
 let g:netrw_winsize = 25
+" supertab
+let g:SuperTabDefaultCompletionType = "context"
+let g:SuperTabContextDefaultCompletionType = "<c-n>"
+"let g:SuperTabCrMapping = 1
+let g:SuperTabRetainCompletionDuration = 'completion'
+let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
+augroup supertab
+    autocmd!
+    autocmd FileType tex let b:SuperTabContextTextMemberPatterns = ['\\', '{']
+    autocmd FileType html,css,javascript let b:SuperTabContextTextMemberPatterns = ['</', '<']
+    autocmd FileType python let b:SuperTabContextTextMemberPatterns = ['\.', '@']
+    autocmd FileType sh,bash let b:SuperTabContextTextMemberPatterns = ['\$', '(']
+    autocmd FileType r,rmd let b:SuperTabContextTextMemberPatterns = ['\.', '\$', ':', '@']
+    autocmd FileType vimwiki let b:SuperTabContextTextMemberPatterns = ['\[', '#', ':']
+augroup END
 "}}}
 
 " Put all the highlight settings here
@@ -157,3 +172,4 @@ nnoremap <silent> <leader>fc :Colors<CR>
 nnoremap <silent> <leader>fs :Files ~/.scripts<CR>
 nnoremap <silent> <leader>b :Buffers<CR>
 "}}}
+"
