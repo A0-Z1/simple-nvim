@@ -21,6 +21,10 @@ set undofile " Save undo trees in files
 set undodir=~/.local/share/nvim/undo " undo directory
 set undolevels=10000 " Number of undo saved
 set completeopt=menuone " specify how popup menu works
+" Set grep engine with the Perl -P option
+let &grepprg="grep -nP $* /dev/null"
+" Set the make command
+let &makeprg="autocompile $*"
 " settings specific to neovim
 set nocompatible
 " update time for CursorHold event in milliseconds
@@ -33,6 +37,13 @@ syntax on
 "" don't implement dbext stupid keybindings
 "let g:omni_sql_no_default_maps = 1
 set listchars=eol:↴,lead:⋅,tab:<->
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
+"set foldlevelstart=99
+" set blinking
+set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
+              \,a:blinkwait400-blinkoff600-blinkon900-Cursor/lCursor
+              \,sm:block-blinkwait175-blinkoff150-blinkon175
 "}}}
 
 " Put all the user-defined variables here
@@ -40,7 +51,7 @@ set listchars=eol:↴,lead:⋅,tab:<->
 " Make every .tex file become filetype latex
 let g:tex_flavor="latex"
 " enable python for virtualenvs
-let g:python3_host_prog = '~\.venv\neovim\Scripts\python.exe'
+let g:python3_host_prog = '~\.venv\neovim\bin\python'
 " }}}
 
 " Put all the plugins here
@@ -88,7 +99,7 @@ colorscheme dracula
 
 " Put all the global mappings and commands here
 "{{{
-let mapleader = ","
+let mapleader = "\<SPACE>"
 let maplocalleader ="\\"
 
 " copy to clipboard
@@ -107,12 +118,16 @@ nnoremap <silent> gm :call cursor(0, virtcol('$')/2)<CR>
 nnoremap <silent> <leader>cc :set cursorcolumn!<CR>
 " Go quickly to init.vim
 nnoremap <silent> <leader>ev :vsplit $MYVIMRC<CR>
+" Go quickly to ginit.vim
+nnoremap <silent> <leader>eg :vsplit ~/.config/nvim/ginit.vim<CR>
 " Source init.vim
 nnoremap <silent> <leader>sv :source $MYVIMRC<CR>
 " jump to alternate buffer (also CTRL_^)
-nnoremap <silent> # <C-^>
-nnoremap <silent> <C-*> #
-nnoremap <silent> <SPACE> za
+nnoremap <silent> - <C-^>
+" remap fold/unfold
+nnoremap <silent> <BS> za
+nnoremap <silent> <S-BS> zA
+nnoremap <silent> <C-S-BS> :call ToggleFold()<CR>
 " Remap window movements
 nnoremap <silent> <A-h> <C-w>h
 nnoremap <silent> <A-j> <C-w>j
@@ -146,9 +161,7 @@ nnoremap <silent> <leader>qp :cprev<CR>
 nnoremap <silent> <leader>qf :cfirst<CR>
 nnoremap <silent> <leader>ql :clast<CR>
 " compile
-nnoremap <silent> <leader>m :make %<CR>
-" Project drawer
-nnoremap <silent> <F2> :Lexplore<CR>
+nnoremap <silent> <leader>x :make %<CR>
 " change directory to local file
 nnoremap <silent> <leader>cd :echom "Changing directory to ".expand("%:h")<CR>:cd %:h<CR>
 " exit from completion without modifying the word with ESC
@@ -160,16 +173,15 @@ cnoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 "" commands
 " Display infos about current file
 command! Infos echo "Informations about file "."'".expand("%:t")."'"."\nFile Type:\t".toupper(&filetype)."\nFile Encoding:\t".toupper(&fenc)."\nFile Format:\t".toupper(&ff)
-
-" display space char
-"nnoremap <silent> <leader>ll :set list!<CR>
-" FZF remappings
-nnoremap <silent> <leader>ff :Files<CR>
-nnoremap <silent> <leader>fm :Marks<CR>
-nnoremap <silent> <leader>fh :History<CR>
-nnoremap <silent> <leader>fw :Rg<CR>
-nnoremap <silent> <leader>fc :Colors<CR>
-nnoremap <silent> <leader>fs :Files ~/.scripts<CR>
-nnoremap <silent> <leader>b :Buffers<CR>
 "}}}
-"
+
+" Put all functions here
+" {{{
+function! ToggleFold()
+    if &foldlevel == 0
+        set foldlevel=99
+    else
+        set foldlevel=0
+    endif
+endfunction
+" }}}
